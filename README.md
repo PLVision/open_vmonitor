@@ -40,7 +40,7 @@ And start add env variable
 ## Docker container
 ```bash
  $ docker pull plvisiondevs/open_vmonitor
- $ docker run -d -p 3000:3000 plvision/open_vmonitor
+ $ docker run -d -p 3000:3000 plvisiondevs/open_vmonitor
 ```
 
 ## Start application
