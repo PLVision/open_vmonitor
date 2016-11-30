@@ -1,0 +1,66 @@
+//-
+  Open vMonitor is a WEB-based tool for monitoring and troubleshooting Open vSwitch
+  Copyright (C) 2014-2016  PLVision
+  Ihor Chumak, Roman Gotsiy
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  PLVision, developers@plvision.eu
+
+extends index
+block maincontent
+  block tablecontent
+
+block scripts
+  script.
+    $(document).ready(function() {
+      $("a.multiple", maincontent).click(function(event) {
+        event.preventDefault();
+
+        var title = $(this).attr('modal-title');
+        $("#modal .modal-header > .modal-title").text(title);
+        var html = $(this).children().html();
+        $("#modal .modal-body > table").html(html);
+        $('#modal').modal({
+          backdrop: true,
+        });
+      });
+
+      document.title = "#{table} - " + "Open_vMonitor";
+
+      // navigate to tabs
+      var idx = document.location.href.lastIndexOf('#');
+
+      if (idx != -1) {
+        var tab = document.location.href.substr(idx);
+        $('.nav.nav-tabs a[href=' + tab + ']').tab('show');
+      }
+
+      $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        window.location.hash = e.target.hash;
+        window.scroll(0, 0); // FIXME: small workaround
+        init_custom_scroller(".scrollbar", true);
+      });
+
+      // update scoller on window resize
+      $(window).resize(function() {
+        update_custom_scroller(".scroller");
+      });
+
+      //$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        //e.target // activated tab
+        //e.relatedTarget // previous tab
+        //init_custom_scroller(".scrollbar", true);
+      //});
+    });

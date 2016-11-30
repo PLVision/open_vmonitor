@@ -1,0 +1,256 @@
+#wrapper {
+    padding-left: 0;
+}
+
+#wrapper.toggled {
+    padding-left: 250px;
+}
+
+#sidebar_wrapper {
+    font-size: 18px;
+    z-index: 1000;
+    position: fixed;
+    /*left: 460px;*/
+    width: 0;
+    height: 100%;
+    margin-left: -460px;
+    overflow-y: none;
+    background-color: #29272c;
+    background: url('/images/bg_login.jpg') bottom;
+}
+
+#sidebar_wrapper {
+  color: #555;
+  padding-left: 0px;
+  padding-right: 0px;
+  height: 100%;
+}
+
+#sidebar_wrapper .well {
+  background-color: transparent;
+  text-align: right;
+  border: none;
+  box-shadow: none;
+}
+
+#sidebar_wrapper .well.well-sm {
+  line-height: 30px;
+}
+
+#wrapper.toggled #sidebar_wrapper {
+    width: 460px;
+}
+
+#page_content_wrapper {
+    width: 100%;
+}
+
+#sidebar_wrapper > div {
+  position: absolute;
+  width: 100%;
+  padding-right: 40px;
+  text-align: right;
+}
+
+.sidebar-welcome {
+  position: absolute;
+  bottom: 70%;
+  color: #007da5;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.sidebar-welcome.mobile-version {
+  visibility: visible;
+}
+
+#sidebar_choose_ip {
+  top: 30%;
+}
+
+.sidebar-welcome div {
+  width: 100%;
+}
+
+.sidebar-welcome .project-name {
+  font-size: 42px;
+  font-weight: normal;
+}
+
+.bottom-line {
+  font-size: 14px;
+  color: #999792;
+  position: absolute;
+  bottom: 3%;
+}
+
+.links-navbar {
+  list-style-type: none;
+  margin: 0;
+}
+
+.links-navbar li {
+  display: inline-block;
+}
+
+.links-navbar li:not(:first-child):before {
+    content: "|";
+    margin: 0 15px;
+}
+
+.links-navbar a {
+  color: #99979c;
+}
+
+.links-navbar a:hover {
+  text-decoration: none;
+}
+
+.btn {
+  color: #ffffff;
+  /*background-color: #3372f2;*/
+  background-color: #00a3d8;
+  font-weight: normal;
+  font-family: sans;
+}
+
+.btn:hover, .btn:active, .btn:focus {
+  color: #ffffff;
+  /*background-color: #1352e2;*/
+  background-color: #00a3d8;
+}
+
+.btn.disabled, .btn[disabled] {
+  background-color: #c9c7cc !important;
+}
+
+.btn.loading {
+  /* temporarily hack: change to lada-spinner in future */
+  background-image: url("/images/spinner.gif");
+  background-position: center;
+  background-repeat: no-repeat;
+  text-indent: -1000px;
+}
+
+#connect_btn {
+  width: 120px;
+  margin-left: 14px;
+}
+
+.nice {
+  margin-bottom: 0px;
+  border-radius: 0px;
+  height: 50px;
+}
+
+.font18 {
+  font-size: 18px;
+}
+
+.radius-fixed {
+  border-radius: 0px;
+}
+
+#row {
+  position: absolute;
+  top: 30%;
+}
+
+body {
+  background-color: #e7e9ec;
+  background: url('/images/bg_login.jpg') bottom right;
+}
+
+.arrow-right {
+  margin-top: 16px;
+  position: absolute;
+  top: 30%;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 8px solid  #99979c;
+}
+
+#add_connection {
+  text-align: center;
+  padding-top: 70px;
+
+}
+
+.btn-enter {
+  padding-top: 6px;
+  vertical-align: bottom;
+  padding-bottom: 32px;
+}
+
+.icon {
+  background-image: url("/images/icons_16x16px.png");
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+}
+
+.icon.icon-add, .icon.icon-add {
+  background-position: 0px 112px;
+}
+
+.icon.icon-add.disabled, .icon.icon-add[disabled] {
+  background-position: 0px 32px;
+}
+
+label.mobile-version {
+  color: #D3E4FF;
+}
+
+@media(min-width:768px) {
+    body {
+      /*background-image: none;*/
+      background-color: #e7e9ec;
+    }
+
+    #wrapper {
+        padding-left: 460px;
+    }
+
+    #wrapper.toggled {
+        padding-left: 0;
+    }
+
+    #sidebar_wrapper {
+        width: 460px;
+    }
+
+    #wrapper.toggled #sidebar_wrapper {
+        width: 0;
+    }
+
+    #page_content_wrapper {
+        /* padding: 20px; */
+    }
+
+    #wrapper.toggled #page_content_wrapper {
+        position: relative;
+        margin-right: 0;
+    }
+
+    .sidebar-welcome.mobile-version {
+      visibility:hidden;
+    }
+
+    label.mobile-version {
+      color: #99979C;
+    }
+    
+    .arrow-right {
+      border-left-color: black;
+    }
+
+    #row {
+      position: absolute;
+      top: 30%;
+      width: 100%;
+      left: 0px;
+      padding-left: 475px;
+    }
+}

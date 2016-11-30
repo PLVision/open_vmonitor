@@ -1,0 +1,82 @@
+//-
+  Open vMonitor is a WEB-based tool for monitoring and troubleshooting Open vSwitch
+  Copyright (C) 2014-2016  PLVision
+  Ihor Chumak, Roman Gotsiy
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  PLVision, developers@plvision.eu
+
+extends ../general_table
+include ../include/mixins
+
+block tablecontent
+  .row
+    .col-lg-12
+      h1.page-header Managers
+  ul.nav.nav-tabs(role='tablist')
+    li.active
+      a(href='#plates', role='tab', data-toggle='tab') Tiles view
+    li
+      a(href='#table', role='tab', data-toggle='tab') Table view
+  div.tab-content
+    div#plates.tab-pane.active(style="padding-top:10px;")
+      .row
+        each manager in data
+          .col-lg-4
+            .panel.panel-info
+              .panel-heading
+                - var state = manager['status'][1].filter(function(element, index) { if (element[0] == 'state') return element[1] })[0];
+                - state = state ? state[1] : 'INACTIVE'
+                - // should be in lowercase
+                strong Manager (#{state.toLowerCase()})
+              .panel-body
+                .row
+                  .col-lg-12
+                    h4 Basic info
+                    table.table.data-table
+                      tbody
+                        tr
+                          td Target
+                          td #{manager['target']}
+                        tr
+                          td Connection Status
+                          - var connection_status = (manager['is_connected'] == false ? 'Disconnected' : 'Connected');
+                          td #{connection_status}
+
+                        tr
+                          td Maximum Back-off
+                          +comma_separated_set_td(manager['max_backoff'])
+                        tr
+                          td Connection Mode
+                          +comma_separated_set_td(manager['connection_mode'])
+                        tr
+                          td Status
+                          td
+                            +comma_separated_list_map(manager['status'])
+                .row
+                  .col-lg-12
+                    h4 External IDs(
+                      +set_length(manager['external_ids'])
+                      |)
+                    +comma_separated_list_map(manager['external_ids'])
+                .row
+                  .col-lg-12
+                    h4 Other Configurations(
+                      +set_length(manager['other_config'])
+                      |)
+                    +comma_separated_list_map(manager['other_config'])
+    div#table.tab-pane
+      .table-wrapper
+        include ../include/htable_inc

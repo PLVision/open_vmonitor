@@ -1,0 +1,255 @@
+//-
+  Open vMonitor is a WEB-based tool for monitoring and troubleshooting Open vSwitch
+  Copyright (C) 2014-2016  PLVision
+  Ihor Chumak, Roman Gotsiy
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  PLVision, developers@plvision.eu
+
+mixin list_db(obj, db)
+  if obj
+    - var isArray = obj instanceof Array;
+    - var isObject = obj instanceof Object;
+
+    if isArray
+      each val, index in obj
+        +list_db(val, db)
+    else if isObject
+      each val, index in obj
+        li
+          a.link(href="/#{index}" data-page="#{index}") #{index}
+          ul.collapse.in
+            +list_db(val, db)
+    else
+      li
+        a.link(href="/#{obj}" data-page="#{obj}", data-addr="#{db}") #{obj}
+
+- if(!isAjax)
+  doctype html
+  html(lang="en")
+    head
+      meta(charset="utf-8")
+      meta(http-equiv="X-UA-Compatible", content="IE=edge")
+      meta(name="viewport", content="width=device-width, initial-scale=1")
+      meta(name="description", content="")
+      meta(name="author", content="")
+      title= title
+      link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+      link(rel='stylesheet', href='/stylesheets/style.css')
+      link(rel='stylesheet', href='/stylesheets/sb-admin-2.css')
+      link(rel='stylesheet', href='/stylesheets/plugins/metisMenu.min.css')
+      link(rel='stylesheet', href='/stylesheets/font-awesome.min.css')
+      link(rel='stylesheet', href='/stylesheets/plugins/scroller.css')
+      link(rel='stylesheet', href='/stylesheets/sweet-alert.css')
+      link(rel='stylesheet', href='/stylesheets/bootstrap-select.min.css')
+      script(src="/js/jquery-1.11.1.min.js")
+      script(src="/js/bootstrap.min.js")
+      script(src="/js/plugins/metisMenu.min.js")
+      script(src="/js/sb-admin-2.js")
+      script(src="/js/d3.v3.min.js")
+      script(src="/js/d3.tip.v0.6.3.js")
+      script(src="/js/event_emitter.js")
+      script(src="/js/plugins/scroller.js")
+      script(src="/js/navigation.js")
+      script(src="/js/assets.js")
+      script(src="/js/loading.js")
+      script(src="/js/sweet-alert.min.js")
+      script(src="/js/bootstrap-select.min.js")
+      script(src="/js/plugins/jquery.cookie.js")
+
+      style(type='text/css').
+        th.rotate {
+          /* Something you can count on */
+          height: 140px;
+          white-space: nowrap;
+        }
+
+        th.rotate > div {
+          transform: rotate(-90deg);
+          -webkit-transform:rotate(-90deg);
+          width: 30px;
+        }
+        th.rotate > div > span {
+
+        }
+
+    body
+      #wrapper
+        nav.navbar.navbar-default.navbar-static-top(role="navigation", style="margin-bottom: 0px;")
+          .navbar-header
+            button.navbar-toggle(type='button')
+              span.sr-only Toggle navigation
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+
+            a.navbar-brand(href="/") Open_vMonitor
+          ul.nav.navbar-top-links.navbar-right
+            label(style="color: #fff; margin-right: 5px;")
+              | Automatic refresh:
+            select.selectpicker.show-tick(data-width="auto")
+              optgroup(label="Refresh timeout")
+                option(value="-1")
+                  | Off
+                option(value="10")
+                  | 10 secs
+                option(value="20")
+                  | 20 secs
+                option(value="30")
+                  | 30 secs
+                option(value="60")
+                  | 1 minute
+            -//li.dropdown
+              -//a.dropdown-toggle(data-toggle='dropdown', href='#')
+                  -//i.fa.fa-envelope.fa-fw
+                  -//i.fa.fa-caret-down
+                -//ul.dropdown-menu.dropdown-messages
+                  -//li
+                    -//a(href='#')
+                      -//div
+                        -//strong John Smith
+                        -//span.pull-right.text-muted
+                          -//em Yesterday
+                      -//div
+                        -//| Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...
+                  -//li.divider
+                  -//li
+                    -//a.text-center(href='/log')
+                      -//strong Read All Messages
+                      -//i.fa.fa-angle-right
+            li.dropdown
+              a.dropdown-toggle(data-toggle='dropdown', href='#')
+                  span.badge#num-of-updates
+                  i.fa.fa-bell.fa-fw
+                  i.fa.fa-caret-down
+                ul.dropdown-menu.dropdown-alerts
+                  //li
+                    a(href='#')
+                      i.fa.fa-gear.fa-fw
+                      | Settings
+                  //li.divider
+                  li
+                    a(href="#") 
+                      | Available only in Full Version
+                      //i.fa.fa-angle-right
+            li.dropdown
+              a.dropdown-toggle(data-toggle='dropdown', href='#')
+                  i.fa.fa-user.fa-fw
+                  i.fa.fa-caret-down
+                ul.dropdown-menu.dropdown-user
+                  //li
+                    a(href='#')
+                      i.fa.fa-gear.fa-fw
+                      | Settings
+                  //li.divider
+                  li
+                    a(href='/logout')
+                      i.fa.fa-sign-out.fa-fw
+                      | Logout
+          .navbar-default.sidebar(role="navigation")
+            .sidebar-nav.navbar-collapse
+              ul.nav#side-menu
+                block sidebar
+
+        #page-wrapper
+          #page_overlay
+          block content
+
+    img(src="/images/loading.gif" id="loading-indicator" style="display:none")
+
+    .modal#modal(tabindex="-1", role="dialog", aria-labelledby="", aria-hidden="true")
+      .modal-dialog.modal-sm
+        .modal-content
+          .modal-header
+            button.close(type="button", data-dismiss="modal")
+              span(area-hidden="true") &times
+              span.sr-only Close
+            h4.modal-title#modal-title
+          .modal-body
+            table.table.table-bordered.table-hover.table-striped
+          .modal-footer
+            button.btn.btn-default(type="button", data-dismiss="modal") Close
+
+    script.
+      $(document).ready(function() {
+        var auto_refresh_interval = undefined;
+      
+        //var addr = $("[data-connection]").first().attr("data-connection");
+        Navigation.init({
+          container : "#maincontent",
+          landing_page : window.location.pathname
+        });
+        //Navigation.go(windo.location.pathname)
+
+        Navigation.on("loaded", function(url) {
+          if ((typeof url === "string") || (url instanceof String)) {
+            var $all_items = $('a[data-page]', $("#side-menu"));
+            $all_items.removeClass('active');
+            select_menu_item('[href="' + url + '"]');
+            $("a[data-page]").navigation();
+            init_custom_scroller(".scrollbar", true);
+            
+          } else {
+            /* we have error here */
+            var xhr = url;
+            if (xhr.status == 500) {
+              swal({
+                title: "Error!",
+                text: "Something went wrong. Try again. If the error persists, connection to ovsdb-server may be lost: try to log out and connect again",
+                // type: "error"
+              });
+            }
+          }
+        });
+
+
+        $(window).on('hashchange', function(e) {
+          $("a[href='" + window.location.hash + "']").click();
+        });
+
+        $('.navbar-toggle').click(function() {
+          $("#wrapper").toggleClass("sidebar-shown");
+          $(".navbar-collapse").toggleClass("in", $("#wrapper").hasClass("sidebar-shown"));
+        });
+
+        // initialize update notifications with selected interval
+        $('.selectpicker').change(function(e) {
+          var value = $(this).find('option:selected').val();
+
+          if (typeof auto_refresh_interval !== "undefined") {
+            clearInterval(auto_refresh_interval);
+            $.cookie("refresh_interval", "-1");
+          }
+          
+          if (value != -1) {
+            auto_refresh_interval = setInterval(function() {
+              window.location.reload();
+            }, value + "000");
+            $.cookie("refresh_interval", value);
+          }
+        });
+        
+        var value = $.cookie("refresh_interval");
+        if ((typeof value === "undefined") || value == 0) {
+          value = -1;
+        }
+
+        if (value != '-1') {
+          $('.selectpicker').val(value).change();
+        }
+
+      });
+- else
+  block content

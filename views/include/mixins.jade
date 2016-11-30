@@ -1,0 +1,185 @@
+//-
+  Open vMonitor is a WEB-based tool for monitoring and troubleshooting Open vSwitch
+  Copyright (C) 2014-2016  PLVision
+  Ihor Chumak, Roman Gotsiy
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  PLVision, developers@plvision.eu
+
+mixin title(value)
+  -// handle 0 and false
+  if typeof(value) !== 'undefined'
+    if typeof(value) === 'number'
+      |#{value}
+    else
+      - var words = value.split('_')
+      - var res = []
+      each word in words
+        - res.push(word.substr(0, 1).toUpperCase() + word.substr(1).toLowerCase())
+      - res = res.join(' ')
+      |#{res}
+
+mixin display_complex_data(col, title, inline, is_row_uuid)
+  - var type = col[0]
+
+  case type
+    when "map"
+      - // this is a map object
+      - var len = col.length - 1
+      if len
+        if col[1].length > 1
+          if !inline
+            a.multiple(href="#", modal-title="#{title}") Multiple values
+              table.hidden
+                tbody
+                  each value, idx in col[1]
+                    tr
+                      td(nowrap)
+                        +title(value[0])
+                      td
+                        - // need to check on named-uuid here
+                        if value[1][0] && value[1][0] == 'uuid'
+                          +display_complex_data(value[1], '', true)
+                        else
+                          |#{value[1]}
+          else
+            -// do not generate popup
+            - col = col[1]
+            each value, idx in col
+              |#{value[0]} #{value[1]}
+              br
+        else
+          - for (var x = 1; x < col.length; x++)
+            - for (var y = 0; y < col[x].length; y++)
+              | #{col[x][y][0]} :
+              if (col[x][y][1] instanceof Array)
+                +display_complex_data(col[x][y][1], '', true)
+              else
+                | #{col[x][y][1]}
+    when "set"
+      - // this is a set of values
+      - var len = col.length - 1
+      if len && (col[1] != '')
+        a.multiple(href="#", modal-title="#{title}") Multiple values
+          table.hidden
+            tbody
+              - var c = col[1][0];
+              if (col[1] instanceof Array) && (c && c[0] == "uuid")
+                each value, idx in col[1]
+                  tr
+                    td
+                      +title(value[3])
+                    td
+                      - //display uuid as link
+                      +display_complex_data(value, '', true)
+              else
+                - // e.g. vlans
+                tr
+                  td
+                    |#{title}
+                  td
+                    |#{col[1]}
+
+    when "uuid"
+      -// have to handle named-uuid
+      if (col[2] instanceof Array) && (col[2][0] == "map")
+        - col[0] = col[2][1], col[1] = col[3]
+        - var res = ''
+        each value, idx in col[0]
+          - res += value[0] + ': ' + value[1]
+        a.uuid(href="/#{col[1]}", data-page="#{col[1]}") #{res}
+      else if (col[2] instanceof Array) && (col[2][0] == "uuid")
+        - col[2] = col[2][1]
+        a.uuid(href="/#{col[3]}/#{col[2]}", data-page="#{col[3]}") #{col[2]}
+      else
+        //- FIXME: hardcode (workaround to fix bug 68: bad link on SSL page)
+        - var link = col[3] + "/" + col[2]
+        - var title = col[2]
+        if (col[3] === "SSL")
+          - link = col[3]
+
+        - // if this is uuid of the current row, then in title should be exact uuid value
+        if (is_row_uuid)
+          - title = col[1]
+
+        a.uuid(href="/#{link}", data-page="#{col[3]}") #{title}
+    default
+      - // should not be here
+      - if (col !== "")
+          | #{col}
+      - else
+          | Empty
+
+mixin comma_separated_list_map(map)
+  if map instanceof Array
+    if map[0] === "map"
+      - map = map[1]
+
+    - var value = ''
+    each element in map
+      b #{element[0]}:
+      | &nbsp;#{element[1]}
+      br
+      |#{value}
+
+mixin comma_separated_set_td(set)
+  - var value;
+  if (set && (set instanceof Array))
+    if set[0] === "set"
+      - set = set[1]
+    else
+      - set = [set]
+    - value = set.join(", ")
+  else
+    - value = set
+  - cls = (!value ? "Empty" : "")
+  td(class="#{cls}") #{value}
+
+
+mixin comma_separated_uuids_links(set, link_to_table)
+  if set[0] === "set"
+    - uuids = set[1]
+  else
+    - uuids = [set]
+
+  span.uuid-links-list
+    each uuid, idx in uuids
+      span.uuid-link
+        - var link = uuid[3] + "/" + uuid[2]
+        if (link_to_table)
+          - link = uuid[3]
+        a(href="/#{link}", data-page="#{uuid[3]}") #{uuid[2]}
+
+mixin set_length(set)
+  if set[0] === "set" || set[0] === "map"
+    - uuids = set[1]
+  else
+    - uuids = [set]
+  |#{uuids.length}
+
+mixin children_list(caption, children, table, refTable, object_name)
+  h4 #{caption} (
+    +set_length(children)
+    |)
+  .row
+    .col-lg-12
+      +comma_separated_uuids_links(children)
+      br
+      if (!object_name)
+        span.uuid-list-details
+          a(href="/#{refTable}" data-page="#{refTable}" class="text-info") Detailed view
+      else
+        span.uuid-list-details
+          a(href="/#{table}/#{object_name}/#{refTable}" data-page="#{refTable}") Detailed view

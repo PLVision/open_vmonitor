@@ -1,0 +1,95 @@
+//-
+  Open vMonitor is a WEB-based tool for monitoring and troubleshooting Open vSwitch
+  Copyright (C) 2014-2016  PLVision
+  Ihor Chumak, Roman Gotsiy
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  PLVision, developers@plvision.eu
+
+extends ../general_table
+include ../include/mixins
+
+block tablecontent
+  .row
+    .col-lg-12
+      h1.page-header Bridges list
+  ul.nav.nav-tabs(role='tablist')
+    li.active
+      a(href='#plates', role='tab', data-toggle='tab') Tiles view
+    li
+      a(href='#table', role='tab', data-toggle='tab') Table view
+  div.tab-content
+    div#plates.tab-pane.active(style="padding-top:10px;")
+      - for (var row = 0; row < data.length / 3; row++)
+        .row
+          - for (var index = row * 3; index < row*3+3 && index < data.length; index++)
+            - bridge = data[index];
+            .col-lg-4
+              .panel.panel-info
+                .panel-heading
+                  strong #{bridge.name}
+                .panel-body
+                  .row
+                    .col-lg-12
+                      h4 Basic info
+                      table.table.data-table
+                        tbody
+                          tr
+                            td Datapath ID
+                            td #{bridge['datapath_id']}
+                          tr
+                            td Fail mode
+                            +comma_separated_set_td(bridge['fail_mode'])
+                          tr
+                            td OpenFlow Versions
+                            +comma_separated_set_td(bridge['protocols'])
+                          tr
+                            td Ports
+                            td
+                              +comma_separated_uuids_links(bridge['ports'])
+                          tr
+                          td Mirrors
+                          td
+                            +comma_separated_uuids_links(bridge['mirrors'])
+                  .row
+                    .col-lg-12
+                      h4 Switch view
+                      .switch_view(id="br_#{bridge.name}")
+                  .row
+                    .col-lg-12
+                      h4 Controllers
+                      table.table.data-table
+                        - controllers = additional_data.controllers[bridge.name]
+                        each controller in controllers
+                          tr
+                            td #{controller.target}
+                            - var cls = (controller.is_connected) ? "text-success" : "text-danger"
+                            td(class="#{cls}") #{controller.is_connected ? "Connected" : "Disconected"}
+                  -//.row
+                    -//.col-lg-6
+                      -//+children_list("Ports", bridge.ports, "Bridge", "Port", bridge.name)
+                    -//.col-lg-6
+                      -//+children_list("Mirrors", bridge.mirrors, "Bridge", "Mirror", bridge.name)
+
+                .panel-footer
+                  a(href="/Bridge/#{bridge.name}") Details
+    div#table.tab-pane
+      .table-wrapper
+        include ../include/htable_inc
+
+    script.
+      $(document).ready(function() {
+        draw_switch_view(".switch_view");
+      });

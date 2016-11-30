@@ -1,0 +1,122 @@
+//-
+  Open vMonitor is a WEB-based tool for monitoring and troubleshooting Open vSwitch
+  Copyright (C) 2014-2016  PLVision
+  Ihor Chumak, Roman Gotsiy
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  PLVision, developers@plvision.eu
+
+extends ../general_table
+include ../include/mixins
+
+block tablecontent
+  - bridge = data
+  if (bridge instanceof Array)
+    - bridge = bridge[0]
+
+  .row
+    .col-lg-12
+      h1.page-header Bridge: #{bridge.name}
+      ul.nav.nav-tabs(role='tablist')
+        li.active
+          a(href='#plates', role='tab', data-toggle='tab') Tiles view
+        li
+          a(href='#table', role='tab', data-toggle='tab') Table view
+
+  div.tab-content
+    div#plates.tab-pane.active(style="padding-top:10px;")
+      .row
+        .col-lg-5
+          .row
+            .col-lg-12
+              .panel.panel-info
+                .panel-heading
+                  strong Info
+                .panel-body
+                  .row
+                    .col-lg-12
+                      table.table.data-table
+                        tbody
+                          tr
+                            td Datapath ID
+                            td #{bridge['datapath_id']}
+                          tr
+                            td Fail mode
+                            +comma_separated_set_td(bridge['fail_mode'])
+                          tr
+                            td OpenFlow Versions
+                            +comma_separated_set_td(bridge['protocols'])
+                          tr
+                            td Flood VLANs
+                            +comma_separated_set_td(bridge['flood_vlans'])
+                          tr
+                            td STP Enable
+                            td #{bridge['stp_enable']}
+          .row
+            .col-lg-12
+              .panel.panel-info
+                - controllers = additional_data.controllers
+                .panel-heading
+                  strong Bridge Controllers
+                .panel-body
+                  .row
+                    .col-lg-12
+                      table.table.data-table
+                        thead
+                          th Target
+                          th Connected
+                          th State
+                          th
+                            |Connected time
+                            h6 (in seconds)
+                          th Last error
+                        tbody
+                          each controller in controllers
+                            tr
+                              td #{controller.target}
+                              - var cls = (controller.is_connected) ? "text-success" : "text-danger"
+                              td(class="#{cls}") #{controller.is_connected}
+                              td #{controller.status.state}
+                              td #{controller.status.sec_since_connect}
+                              td.text-danger #{controller.status.last_error}
+        .col-lg-7
+          .panel.panel-info
+            .panel-heading
+              strong Ports
+            .panel-body
+              .row
+                .col-lg-6
+                  .row
+                    .col-lg-6
+                      +children_list("Ports", bridge.ports, "Bridge", "Port", bridge.name)
+                  .row
+                    .col-lg-12
+                      h4 Switch view
+                      .switch_view(id="br_#{bridge.name}")
+                .col-lg-6
+                  .row
+                    .col-lg-12
+                      h4 Ports statistics
+                      div.scrollbar
+                        table.table#port_stats.stats-table
+    div#table.tab-pane
+      .table-wrapper
+        include ../include/vtable_inc
+
+    script.
+      $(document).ready(function() {
+        draw_switch_view(".switch_view", function(){});
+        display_port_stats("#port_stats", "#{bridge.name}");
+      });

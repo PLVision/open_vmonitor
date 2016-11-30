@@ -1,0 +1,47 @@
+//-
+  Open vMonitor is a WEB-based tool for monitoring and troubleshooting Open vSwitch
+  Copyright (C) 2014-2016  PLVision
+  Ihor Chumak, Roman Gotsiy
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  PLVision, developers@plvision.eu
+
+include mixins
+if data.length == 0
+  h3 #{title}: no data here
+else
+  h3 #{title}
+  - var row = data
+  if (row instanceof Array)
+    - row = data[0]
+  table.table.table-bordered.table-hover.table-striped#use_datatable
+    thead
+      tr
+        th.col-lg-2(nowrap) Option
+        th(nowrap) Value(s)
+    tbody
+      - var keys = Object.keys(table_schema.columns).sort();
+      //- displaying row (record) uuid
+      tr
+        td Uuid
+        td
+          +display_complex_data(row["_uuid"], "", false, true)
+      each key in keys
+        tr
+          td
+            +title(key)
+          td
+            - var title = key.substr(0, 1).toUpperCase() + key.substr(1).toLowerCase()
+            +display_complex_data(row[key], title)

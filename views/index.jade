@@ -1,0 +1,92 @@
+//-
+  Open vMonitor is a WEB-based tool for monitoring and troubleshooting Open vSwitch
+  Copyright (C) 2014-2016  PLVision
+  Ihor Chumak, Roman Gotsiy
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  PLVision, developers@plvision.eu
+
+extends layout
+
+mixin list_objects(table, list, sub_items)
+  each obj, key in list
+    li
+      - var id = obj.name + "_submenu"
+      a.link(data-toggle="collapse",data-target="##{id}") #{obj.name}
+        span.fa.arrow
+      ul.nav.nav-third-level.collapse(id="#{id}")
+        each item_details, item_link in sub_items
+          li
+            a.link(href="/#{table}/#{obj.name}/#{item_link}" data-page="#{item_details.caption}") #{item_details.caption}
+
+block sidebar
+  - var c = ""
+  - var auth_error_text = ""
+  if authorized !== undefined
+    - c = (authorized === true ? "bg-success" : "bg-danger");
+    - auth_error_text = auth_error ? "Server is unauthorized: " + auth_error :  "Server is authorized";
+  // li(class="disabled #{c}" title="#{auth_error_text}")
+    a Connection: #{connection}
+  li(class="disabled")
+    a #{connection}/Open_vSwitch
+    // .btn-group
+      //label.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown')
+      div 
+        | #{selected_db}&nbsp;
+        //span.caret
+
+      ul.dropdown-menu(role='menu', aria-labelledby='dLabel')
+        each db in databases
+          - var cls = (db===selected_db) ? "active" : ""
+          li(role='presentation', class="#{cls}")
+            a(role='menuitem', tabindex='-1', href='#', value="#{db}") #{db}
+  -//li
+    -//a(href="/", data-page="dashboard") Dashboard
+  li
+    a.link(href="/Open_vSwitch" data-page="Open_vSwitch") General info
+  li
+    a(href='#')
+      -//i.fa.fa-bar-chart-o.fa-fw
+      | Bridges
+      span.fa.arrow
+    - var bridge_subitems = { "" : { caption: "Bridge Details" }, "Port" : { caption : "Ports" }, "NetFlow" : { caption : "NetFlow" }, "Mirror" : { caption : "Mirrors" }, "Controller" : { caption : "Controller" }, "IPFIX" : { caption : "IPFIX" }, "sFlow" : {caption : "sFlow"} }
+    ul.nav.nav-second-level.collapse
+      li
+        a.link(href="/Bridge", data-page="Bridge") Bridges List
+      +list_objects("Bridge", bridges, bridge_subitems)
+    li
+      a.link(href="/Manager" data-page="Manager") Manager
+    li
+      a.link(href='/QoS' data-page="QoS") QoS
+    li
+      a.link(href='/Queue' data-page="Queue") Queues
+    li
+      a.link(href='/Flow_Table' data-page="Flow_Table") Flow Table
+    li
+      a.link(href='/Flow_Sample_Collector_Set' data-page="Flow_Sample_Collector_Set") Flow Sample Collector Set
+//    li
+//      a.link(href='/alerts' data-page="Alerts") Alerts
+//      a.link(href="/SSL" data-page="SSL") SSL
+//    li
+
+block content
+  - if(!isAjax)
+      .row
+        .col-lg-12#maincontent
+          block maincontent
+          block scripts
+  - else
+    block maincontent
+    block scripts

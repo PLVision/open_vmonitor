@@ -1,0 +1,77 @@
+//-
+  Open vMonitor is a WEB-based tool for monitoring and troubleshooting Open vSwitch
+  Copyright (C) 2014-2016  PLVision
+  Ihor Chumak, Roman Gotsiy
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  PLVision, developers@plvision.eu
+
+extends ../general_table
+include ../include/mixins
+
+block tablecontent
+  .row
+    .col-lg-12
+      h1.page-header SSL
+  ul.nav.nav-tabs(role='tablist')
+    li.active
+      a(href='#plates', role='tab', data-toggle='tab') Tiles view
+    li
+      a(href='#table', role='tab', data-toggle='tab') Table view
+  div.tab-content
+    div#plates.tab-pane.active(style="padding-top:10px;")
+      .row
+        each ssl in data
+          .col-lg-6
+            .panel.panel-info
+              .panel-heading
+                strong SSL
+              .panel-body
+                .row
+                  .col-lg-12
+                    h4 Basic info
+                    table.table.data-table
+                      tbody
+                        tr
+                          td CA Cert
+                          td #{ssl['ca_cert']}
+                        tr
+                          td Bootstrap CA Cert
+                          - var is_empty = ssl['bootstrap_ca_cert'] === false
+                          td
+                            - if (is_empty)
+                              | false
+                            - else
+                              | #{ssl['bootstrap_ca_cert']}
+                        tr
+                          td Private Key
+                          td #{ssl['private_key']}
+                        tr
+                          td Certificate
+                          td #{ssl['certificate']}
+
+                .row
+                  .col-lg-12
+                    h4 External IDs(
+                      +set_length(ssl['external_ids'])
+                      |)
+                    +comma_separated_list_map(ssl['external_ids'])
+              //.panel-footer
+                //a(href="/SSL#table") Details
+    div#table.tab-pane
+      .table-wrapper
+        include ../include/vtable_inc
+
+    script

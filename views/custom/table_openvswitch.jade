@@ -1,0 +1,88 @@
+//-
+  Open vMonitor is a WEB-based tool for monitoring and troubleshooting Open vSwitch
+  Copyright (C) 2014-2016  PLVision
+  Ihor Chumak, Roman Gotsiy
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  PLVision, developers@plvision.eu
+
+extends ../general_table
+include ../include/mixins
+
+block tablecontent
+  .row
+    .col-lg-12
+      h1.page-header Open_vSwitch
+  ul.nav.nav-tabs(role='tablist')
+    li.active
+      a(href='#plates', role='tab', data-toggle='tab') Tiles view
+    li
+      a(href='#table', role='tab', data-toggle='tab') Table view
+  div.tab-content
+    div#plates.tab-pane.active(style="padding-top:10px;")
+      .row
+        - openvswitch = data[0];
+        .col-lg-6
+          .panel.panel-info
+            .panel-heading
+              strong Open_vSwitch
+            .panel-body
+              .row
+                .col-lg-12
+                  h4 Basic info
+                  table.table.data-table
+                    tbody
+                      tr
+                        td System Version
+                        +comma_separated_set_td(openvswitch['system_version'])
+                      tr
+                        td System Type
+                        +comma_separated_set_td(openvswitch['system_type'])
+                      tr
+                        td Bridges
+                        td
+                          +comma_separated_uuids_links(openvswitch['bridges'])
+                      tr
+                        td Manager Options
+                        td
+                          +comma_separated_uuids_links(openvswitch['manager_options'])
+                      tr
+                        td OVS Version
+                        +comma_separated_set_td(openvswitch['ovs_version'])
+                      tr
+                        td SSL
+                        td
+                          +comma_separated_uuids_links(openvswitch['ssl'], true)
+                      tr
+                        td Database Version
+                        +comma_separated_set_td(openvswitch['db_version'])
+                      tr
+                        td Current Configuration
+                        td #{openvswitch['cur_cfg']}
+
+                  -//+children_list("Bridges", openvswitch.bridges, "Open_vSwitch", "Bridge")
+                  -//+children_list("Managers", openvswitch.manager_options, "Manager", "Manager")
+
+              .row
+                .col-lg-6
+                  -//+children_list("Mirrors", undefined, "Bridge", "Mirror", openvswitch.name)
+              .row
+                .col-lg-6
+                  -//+children_list("Controllers", openvswitch.controller, "Bridge", "Controller", openvswitch.name)
+            //.panel-footer
+              //a(href="/Bridge")
+    div#table.tab-pane
+      .table-wrapper
+        include ../include/vtable_inc

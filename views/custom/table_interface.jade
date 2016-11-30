@@ -1,0 +1,93 @@
+//-
+  Open vMonitor is a WEB-based tool for monitoring and troubleshooting Open vSwitch
+  Copyright (C) 2014-2016  PLVision
+  Ihor Chumak, Roman Gotsiy
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  PLVision, developers@plvision.eu
+
+extends ../general_table
+include ../include/mixins
+
+block tablecontent
+  .row
+    .col-lg-12
+      h1.page-header All Interfaces
+  ul.nav.nav-tabs(role='tablist')
+    li.active
+      a(href='#plates', role='tab', data-toggle='tab') Tiles view
+    li
+      a(href='#table', role='tab', data-toggle='tab') Table view
+  div.tab-content
+    div#plates.tab-pane.active(style="padding-top:10px;")
+      .row
+        each interface in data
+          .col-lg-4
+            .panel.panel-info
+              .panel-heading
+                strong Interface
+              .panel-body
+                .row
+                  .col-lg-12
+                    h4 Basic info
+                    table.table.data-table
+                      tbody
+                        tr
+                          td Name
+                          td #{interface['name']}
+                        tr
+                          td MAC
+                          td #{interface['mac_in_use']}
+                        tr
+                          td Link State
+                          td #{interface['link_state']}
+                        tr
+                          td Link Speed
+                          if (interface['link_speed'] instanceof Array)
+                            +comma_separated_set_td(interface['link_speed'])
+                          else
+                            td #{interface['link_speed']}
+                        tr
+                          td Duplex
+                          if (interface['duplex'] instanceof Array)
+                            +comma_separated_set_td(interface['duplex'])
+                          else
+                            td #{interface['duplex']}
+                        tr
+                          td MTU
+                          td #{interface['mtu']}
+                          -//+comma_separated_set_td(interface['connection_mode'])
+                        -//tr
+                          -//td Status
+                          -//td
+                            -//+comma_separated_list_map(interface['statistics'])
+                .row
+                  .col-lg-12
+                    h4 Status(
+                      +set_length(interface['status'])
+                      |)
+                    +comma_separated_list_map(interface['status'])
+                .row
+                  .col-lg-12
+                    h4 Statistics(
+                      +set_length(interface['statistics'])
+                      |)
+                    +comma_separated_list_map(interface['statistics'])
+
+              .panel-footer
+                a(href="/Interface/#{interface['name']}") Details
+    div#table.tab-pane
+      .table-wrapper
+        include ../include/htable_inc

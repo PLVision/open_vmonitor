@@ -1,0 +1,135 @@
+//-
+  Open vMonitor is a WEB-based tool for monitoring and troubleshooting Open vSwitch
+  Copyright (C) 2014-2016  PLVision
+  Ihor Chumak, Roman Gotsiy
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  PLVision, developers@plvision.eu
+
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    meta(name="description", content="")
+    meta(name="author", content="")
+    title= title
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/default.css')
+    link(rel='stylesheet', href='/stylesheets/sweet-alert.css')
+    script(src="/js/jquery-1.11.1.min.js")
+    script(src="/js/bootstrap.min.js")
+    script(src="/js/sweet-alert.min.js")
+
+  body.cable
+    #wrapper
+      #sidebar_wrapper
+        .sidebar-welcome
+          div PLVision
+            .project-name Open_vMonitor
+        #sidebar_choose_ip.well.well-sm.nice Enter Credentials
+          .well.well-sm.nice(style="margin-top: 72px; padding-right: 0px;") Enter OVSDB IP
+        .bottom-line
+          -// copyright here
+
+      #page_content_wrapper
+        .arrow-right
+        .container-fluid
+          .sidebar-welcome.mobile-version.col-lg-6
+            div PLVision
+              .project-name OVS Open_vMonitor
+          .row-fluid#row
+            .col-lg-6
+              .row
+                .col-lg-12
+                  .input-group
+                    input.form-control.nice.font18#username(type="text", placeholder="login", value="#{username}")
+                    input.form-control.nice.font18#password(type="password", placeholder="password", style="margin-top: 2px;")
+                    input.form-control.nice.font18#database_ip_address(type="text", value="#{connection}", placeholder="Database IP Address", style="margin-top: 6px;")
+                    label.mobile-version
+                      //input#secure(type="checkbox")
+                      //| Use secured connection
+                    button.btn.btn-default.font18.radius-fixed.pull-right#connect_btn(type="submit", style="margin-top: 6px;") Connect
+
+          ul.bottom-line.links-navbar
+            li
+              a(href="http://plvision.eu", target="_blank") About
+            li
+              a(href="http://plvision.eu/contact-us/", target="_blank") Contacts
+  script.
+    $(document).ready(function() {
+      $("#database_ip_address, #username, #password, #secure").bind("keypress", {}, function(event) {
+        var code = (event.keyCode ? event.keyCode : event.which);
+
+        if (code == 13) { /* Enter keycode */
+          event.preventDefault();
+
+          $("#connect_btn").click();
+        }
+      });
+      
+      $("#connect_btn").click(function() {
+        var db_ip = $("#database_ip_address").val();
+        var username = $("#username").val();
+        var password = $("#password").val();
+        var secure = $("#secure").prop("checked");
+
+        $("#connect_btn").addClass("loading").attr("disabled", true);
+
+        $.ajax( {
+          type : "POST",
+          url: "/enter",
+          data: {
+            "database_ip_address" : db_ip,
+            "username" : username,
+            "password" : password,
+            "secure" : secure
+          },
+          timeout : 15000
+        })
+          .done(function() {
+            window.location.href = "/";
+          })
+          .fail(function(e, t, m) {
+            var error_text;
+
+            switch (e.status) {
+              case 403:
+                error_text = "Authentication error.";
+                break;
+              default:
+                error_text = "Can not connect to server.";
+                if (t === "timeout") {
+                  error_text += " Timeout error.";
+                }
+                break;
+            }
+
+            if (e.responseJSON && e.responseJSON.message) {
+              error_text += " " + e.responseJSON.message;
+            }
+
+            swal({
+              title: "Error!",
+               text: error_text,
+            //   type: "error"
+            });
+          })
+          .always(function() {
+            $("#connect_btn").removeClass("loading").removeAttr("disabled");
+          })
+      });
+    })

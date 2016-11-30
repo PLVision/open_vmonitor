@@ -1,0 +1,89 @@
+//-
+  Open vMonitor is a WEB-based tool for monitoring and troubleshooting Open vSwitch
+  Copyright (C) 2014-2016  PLVision
+  Ihor Chumak, Roman Gotsiy
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  PLVision, developers@plvision.eu
+
+extends ../general_table
+include ../include/mixins
+
+block tablecontent
+  .row
+    .col-lg-12
+      h1.page-header #{title}
+  ul.nav.nav-tabs(role='tablist')
+    li.active
+      a(href='#plates', role='tab', data-toggle='tab') Tiles view
+    li
+      a(href='#table', role='tab', data-toggle='tab') Table view
+  div.tab-content
+    div#plates.tab-pane.active(style="padding-top:10px;")
+      .row
+        each controller in data
+          .col-lg-4
+            .panel.panel-info
+              .panel-heading
+                strong Controller
+              .panel-body
+                .row
+                  .col-lg-12
+                    h4 Basic info
+                    table.table.data-table
+                      tbody
+                        tr
+                          td Target
+                          td #{controller['target']}
+                        tr
+                          td Connected
+                          td #{controller['is_connected']}
+                        tr
+                          td Local Network Mask
+                          +comma_separated_set_td(controller['local_netmask'])
+                        tr
+                          td Local Gateway
+                          +comma_separated_set_td(controller['local_gateway'])
+                        tr
+                          td Maximum Back-off
+                          +comma_separated_set_td(controller['max_backoff'])
+                        tr
+                          td Local IP
+                          +comma_separated_set_td(controller['local_ip'])
+                .row
+                  .col-lg-12
+                    h4 Status (
+                      +set_length(controller['status'])
+                      |)
+                    +comma_separated_list_map(controller['status'])
+                .row
+                  .col-lg-12
+                    h4 External IDs(
+                      +set_length(controller['external_ids'])
+                      |)
+                    +comma_separated_list_map(controller['external_ids'])
+                .row
+                  .col-lg-12
+                    h4 Other Configuration(
+                      +set_length(controller['other_config'])
+                      |)
+                    +comma_separated_list_map(controller['other_config'])
+              .panel-footer
+                a(href="/Controller#table") Details
+    div#table.tab-pane
+      .table-wrapper
+        include ../include/htable_inc
+
+    script

@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "async": "0.9.0",
+    "body-parser": "1.6.7",
+    "cookie-session": "1.0.2",
+    "errorhandler": "1.2.0",
+    "express": "4.8.7",
+    "jade": "1.7.0",
+    "ovsdb-client": "*",
+    "uuid": "^3.0.0"
+  },
+  "devDependencies": {
+    "debug": "1.0.4"
+  },
+  "license": "AGPLv3",
+  "name": "Open_vMonitor",
+  "private": false,
+  "scripts": {
+    "start": "node app.js",
+    "package": "jx package app.js && rm app.jxp",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.1"
+}
