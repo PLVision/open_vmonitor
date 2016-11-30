@@ -1,4 +1,5 @@
-﻿[![Open_vMonitor Logo](http://plvision.eu/wp-content/themes/plvision/img/plvision-logo.png)](http://plvision.eu/)
+[![Open_vMonitor Logo](http://plvision.eu/wp-content/themes/plvision/img/plvision-logo.png)](http://plvision.eu/)
+
 Fast and minimalist OVSDB UI for [node](http://nodejs.org).
 
 ## Prerequirements
@@ -51,8 +52,9 @@ And start add env variable
 Initial user/password are admin/admin
 
 ## People
-Authors of Open_vMonitor are Ihor Chumak and Roman Gotsiy (developers@plvision.eu).
+Copyright (c) 2014-2016 PLVision
+Authors of ovsdb-client are Ihor Chumak and Roman Gotsiy (developers@plvision.eu).
 Maintainer: Ihor Chumak (developers@plvision.eu)
 
 ## License
- [AGPLv3](LICENSE)
+ [AGPL-3.0](LICENSE)
