@@ -15,7 +15,7 @@ Open_vMonitor requires an opened OVS database port. In most cases it is enough t
 
 ## Installation from Github
 ```bash
- $ git clone git://github.com/plvision/open_vmonitor.git
+ $ git clone https://github.com/plvisiondevs/open_vmonitor.git
  $ cd open_vmonitor
  $ npm install
 ```
