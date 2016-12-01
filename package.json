@@ -21,7 +21,7 @@
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/plvisiondevs/open_vmonitor.git"
+    "url": "https://github.com/PLVision/open_vmonitor.git"
   },
   "scripts": {
     "start": "node app.js",
