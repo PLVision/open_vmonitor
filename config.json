@@ -1,0 +1,17 @@
+{
+  "secure_connection": {
+    "private_key": "/var/ovm/vtep-privkey.pem",
+    "certificate": "/var/ovm/vtep-cert.pem",
+    "ca_certificate": ""
+  },
+  "credentials": {
+    "username" : "admin",
+    "password" : "admin"
+  },
+  "server" : {
+    "mode" : "http",
+    "port" : 3000,
+    "key" : "",
+    "certificate" : ""
+  }
+}
