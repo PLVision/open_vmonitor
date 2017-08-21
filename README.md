@@ -1,6 +1,8 @@
-[![Open_vMonitor Logo](http://plvision.eu/wp-content/themes/plvision/img/plvision-logo.png)](http://plvision.eu/)
+[![PLVision Logo](https://plvision.eu/wp-content/themes/THEME/img/logo.svg)](http://plvision.eu/)
 
-Fast and minimalist OVSDB UI for [node](http://nodejs.org).
+Fast and minimalist OVSDB UI for [node](http://nodejs.org) - https://plvision.eu/open-vmonitor/
+
+![Open_vMonitor screenshot](https://plvision.eu/wp-content/uploads/2017/04/Artboard.png)
 
 ## Prerequirements
 Open_vMonitor requires an opened OVS database port. In most cases it is enough to perform this action on a server side. This will open OVSDB port in passive mode on port 6640 (OVSDB default).
@@ -53,7 +55,7 @@ Initial user/password are admin/admin
 
 ## People
 Copyright (c) 2014-2016 PLVision
-Authors of ovsdb-client are Ihor Chumak and Roman Gotsiy (developers@plvision.eu).
+Authors of ovsdb-client are Ihor Chumak and [Roman Gotsiy](https://github.com/romangotsiy) (developers@plvision.eu).
 Maintainer: Ihor Chumak (developers@plvision.eu)
 
 ## License
