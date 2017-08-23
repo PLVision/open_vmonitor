@@ -10,11 +10,6 @@ Open_vMonitor requires an opened OVS database port. In most cases it is enough t
  $ sudo ovs-vsctl set-manager ptcp:6640 
 ```
 
-## Installation using npmjs
-```bash
- $ npm install open_vmonitor
-```
-
 ## Installation from Github
 ```bash
  $ git clone https://github.com/PLVision/open_vmonitor.git
